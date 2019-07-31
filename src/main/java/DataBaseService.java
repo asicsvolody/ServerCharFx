@@ -1,11 +1,11 @@
 import java.sql.*;
 
-public class DataBaseService {
+class DataBaseService {
 
     private static Connection connection;
     private static Statement stmt;
 
-    public static void connect() throws SQLException {
+    static void connect() throws SQLException {
         try {
             Class.forName("org.sqlite.JDBC");
             connection = DriverManager.getConnection("jdbc:sqlite:./src/main/resources/MyUsers.db");
@@ -16,7 +16,7 @@ public class DataBaseService {
         }
     }
 
-    public static synchronized String getNickByLoginAndPass(String login, String pass) {
+    static synchronized String getNickByLoginAndPass(String login, String pass) {
         String sql = String.format("SELECT nickname FROM main where login = '%s' and password = '%s'", login, pass);
 
         try {
@@ -33,7 +33,7 @@ public class DataBaseService {
         return null;
     }
 
-    public static synchronized void addToBlackList(String holderBlackList, String userToBlackList){
+    static synchronized void addToBlackList(String holderBlackList, String userToBlackList){
         String sql = String.format("SELECT blacklist FROM main where nickname = '%s'", holderBlackList);
         try {
             ResultSet rs = stmt.executeQuery(sql);
@@ -49,7 +49,7 @@ public class DataBaseService {
         }
     }
 
-    public static synchronized boolean isInBlackList (String holderBlackList, String userForCheck){
+    static synchronized boolean isInBlackList (String holderBlackList, String userForCheck){
         boolean res = false;
         String sql = String.format("SELECT blacklist FROM main where nickname = '%s'", holderBlackList);
         try {
@@ -68,7 +68,7 @@ public class DataBaseService {
         }
         return res;
     }
-    public static synchronized boolean isUserWithLogin(String login){
+    private static synchronized boolean isUserWithLogin(String login){
         boolean isUser = false;
         String sql = String.format("SELECT id FROM main where login = '%s'", login );
         try {
@@ -82,7 +82,7 @@ public class DataBaseService {
         return isUser;
     }
 
-    public synchronized static boolean isUserWithNick(String nick){
+    synchronized static boolean isUserWithNick(String nick){
         boolean isUser = false;
         String sql = String.format("SELECT id FROM main where nickname = '%s'", nick );
         try {
@@ -97,7 +97,7 @@ public class DataBaseService {
 
     }
 
-    public static synchronized void deleteFromBlackList (String holderBlackList, String userDeleteFromBlackList){
+    static synchronized void deleteFromBlackList (String holderBlackList, String userDeleteFromBlackList){
         String sql = String.format("SELECT blacklist FROM main where nickname = '%s'", holderBlackList);
         try {
             ResultSet rs = stmt.executeQuery(sql);
@@ -121,7 +121,7 @@ public class DataBaseService {
 
     }
 
-    public static synchronized String registration(String regData){
+    static synchronized String registration(String regData){
         String msg="";
         String[] regDataArr = regData.split(" ");
         try {
@@ -141,7 +141,7 @@ public class DataBaseService {
         }
         return msg;
     }
-    public static synchronized String recoveryPass(String recoveryData){
+    static synchronized String recoveryPass(String recoveryData){
         String resMsg = "/recovery ";
         String[] recoveryDataArr = recoveryData.split(" ");
         String sql = String.format("SELECT password FROM main where login = '%s' and  controlword = '%s';"
@@ -162,7 +162,7 @@ public class DataBaseService {
 
 
 
-    public static void clearBlackList(String holderBlackList){
+    static void clearBlackList(String holderBlackList){
         String sql = String.format("UPDATE main SET blacklist = NULL WHERE nickname = '%s'",holderBlackList);
         try {
             stmt.execute(sql);
@@ -171,7 +171,7 @@ public class DataBaseService {
         }
     }
 
-    public static void writeMessageToSQLite(String nickName, String message){
+    static void writeMessageToSQLite(String nickName, String message){
         String sql = String.format("INSERT INTO messages (nickname, message) VALUES ('%s','%s');",nickName, message);
         try {
             stmt.execute(sql);
@@ -180,7 +180,7 @@ public class DataBaseService {
         }
     }
 
-    public static void clearMessageTable(){
+    private static void clearMessageTable(){
         String sql = "DELETE FROM messages;";
         try {
             stmt.execute(sql);
@@ -190,7 +190,7 @@ public class DataBaseService {
     }
 
 
-    public static synchronized void sendAllMessage(ClientHandler clientHandler) {
+    static synchronized void sendAllMessage(ClientHandler clientHandler) {
         String sql = "SELECT nickname, message FROM messages;";
         try {
             ResultSet rs = stmt.executeQuery(sql);
@@ -204,7 +204,7 @@ public class DataBaseService {
 
     }
 
-    public static void disconnect() {
+    static void disconnect() {
         try {
             connection.close();
         } catch (SQLException e) {

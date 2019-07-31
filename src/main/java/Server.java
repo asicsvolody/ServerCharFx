@@ -50,7 +50,7 @@ public class Server {
             DataBaseService.disconnect();
         }
     }
-    public boolean isNickBusy(String nick) {
+    boolean isNickBusy(String nick) {
         for (ClientHandler o : clients) {
             if (o.getNick().equals(nick)) {
                 return true;
@@ -59,13 +59,13 @@ public class Server {
         return false;
     }
 
-    public void broadcastSystemMsg(String msg){
+    void broadcastSystemMsg(String msg){
         for (ClientHandler o: clients) {
             o.sendMsg("/systemmsg "+msg);
         }
     }
 
-    public void broadcastMsg(ClientHandler from, String msg) {
+    void broadcastMsg(ClientHandler from, String msg) {
         for (ClientHandler o : clients) {
             if (!DataBaseService.isInBlackList(from.getNick(),o.getNick())) {
                 o.sendMsg(msg);
@@ -74,7 +74,7 @@ public class Server {
         writeToAdminLogDebug(msg);
     }
 
-    public void sendPersonalMsg(ClientHandler from, String nickTo, String msg) {
+    void sendPersonalMsg(ClientHandler from, String nickTo, String msg) {
         for (ClientHandler o : clients) {
             if (o.getNick().equals(nickTo)) {
                 if(DataBaseService.isInBlackList(o.getNick(),from.getNick())){
@@ -91,7 +91,7 @@ public class Server {
         from.sendMsg("/systemmsg Клиент с ником " + nickTo + " не в чате");
     }
 
-    public void subscribe (ClientHandler clientHandler){
+    void subscribe (ClientHandler clientHandler){
         clients.add(clientHandler);
         broadcastSystemMsg(clientHandler.getNick()+" подключился");
         broadcastClientList();
@@ -100,14 +100,14 @@ public class Server {
 
     }
 
-    public void unsubscribe (ClientHandler clientHandler){
+    void unsubscribe (ClientHandler clientHandler){
         clients.remove(clientHandler);
         broadcastSystemMsg(clientHandler.getNick()+" отключился");
         broadcastClientList();
     }
 
 
-    public void broadcastClientList(){
+    private void broadcastClientList(){
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("/clientlist ");
         for (ClientHandler clientHandler : clients) {
@@ -121,27 +121,27 @@ public class Server {
 
     }
 
-    public void writeToAdminLogInfo(String logMessage){
+    void writeToAdminLogInfo(String logMessage){
         adminLog.info(logMessage);
     }
 
-    public void writeToAdminLogWarn(String logMessage){
+    void writeToAdminLogWarn(String logMessage){
         adminLog.warn(logMessage);
     }
 
-    public void writeToAdminLogDebug(String logMessage){
+    private void writeToAdminLogDebug(String logMessage){
         adminLog.debug(logMessage);
     }
 
-    public void writeToAdminLogFatal(String logMessage){
+    private void writeToAdminLogFatal(String logMessage){
         adminLog.fatal(logMessage);
     }
 
-    public void writeToAdminLogError(String logMessage){
+    void writeToAdminLogError(String logMessage){
         adminLog.error(logMessage);
     }
 
-    public String stackTraceToString(StackTraceElement[] stackTracesArr){
+    String stackTraceToString(StackTraceElement[] stackTracesArr){
         StringBuilder sb = new StringBuilder("\n");
         for (StackTraceElement st : stackTracesArr) {
             sb.append("\t");
