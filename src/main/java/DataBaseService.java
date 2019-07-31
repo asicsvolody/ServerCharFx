@@ -8,7 +8,7 @@ public class DataBaseService {
     public static void connect() throws SQLException {
         try {
             Class.forName("org.sqlite.JDBC");
-            connection = DriverManager.getConnection("jdbc:sqlite:./src/main/resources/resourcesChatFx/resourcesServer/MyUsers.db");
+            connection = DriverManager.getConnection("jdbc:sqlite:./src/main/resources/MyUsers.db");
             stmt = connection.createStatement();
             clearMessageTable();
         } catch (ClassNotFoundException e) {
