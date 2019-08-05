@@ -36,7 +36,6 @@ public class Server {
 //            e.printStackTrace();
         }
         finally {
-//            writeToAdminLogInfo("Server is close");
             try {
                 socket.close();
             } catch (IOException e) {
