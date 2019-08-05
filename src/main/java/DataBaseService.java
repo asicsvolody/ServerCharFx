@@ -54,7 +54,7 @@ class DataBaseService {
 
     }
 
-    private static synchronized boolean isUserWithLogin(String login){
+    static synchronized boolean isUserWithLogin(String login){
         boolean isUser = false;
         String sql = String.format("SELECT id FROM main where login = '%s'", login );
         try {
@@ -101,32 +101,14 @@ class DataBaseService {
         return res;
     }
 
-//    private static void updateBlackList(String blacklist, )
-//убрать метод в контроллер регистрации
-//    static synchronized String registration(String regData){
-//        String msg="";
-//        String[] regDataArr = regData.split(" ");
-//        try {
-//            if(isUserWithLogin(regDataArr[1])){
-//                msg = "Пользователь с логином "+regDataArr[1]+ " уже зарегистрирован";
-//            }else if(isUserWithNick(regDataArr[3])){
-//                msg = "Пользователь с ником "+regDataArr[3]+ " уже зарегистрирован";
-//            }else {
-//                writeRegDataToSQLite(regDataArr[1], regDataArr[2], regDataArr[3], regDataArr[4]);
-//                msg = "/regok";
-//            }
-//
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//        }
-//        return msg;
-//    }
-
-    private static void writeRegDataToSQLite(String login, String password, String nickname, String controlword)
-            throws SQLException {
+    static void writeRegDataToSQLite(String login, String password, String nickname, String controlword) {
         String sql = String.format("INSERT INTO main (login, password, nickname, controlword)\n" +
                 "VALUES ('%s', '%s','%s','%s');", login, password, nickname, controlword);
-        stmt.execute(sql);
+        try {
+            stmt.execute(sql);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     static synchronized String recoveryPass(String recoveryData){
@@ -169,7 +151,7 @@ class DataBaseService {
     }
 
     private static void clearMessageTable(){
-        String sql = "DELETE FROM messages;";
+        String sql = "DELETE FROM messages";
         try {
             stmt.execute(sql);
         } catch (SQLException e) {

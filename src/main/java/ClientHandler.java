@@ -6,8 +6,8 @@ import java.net.Socket;
 
 public class ClientHandler {
 
-//    private Socket socket;
-//    private Server server;
+    private Socket socket;
+    private Server server;
 
     private DataInputStream in;
     private DataOutputStream out;
@@ -18,8 +18,8 @@ public class ClientHandler {
 
     public ClientHandler(Socket socket, Server server) {
         try {
-//            this.socket = socket;
-//            this.server = server;
+            this.socket = socket;
+            this.server = server;
             this.in = new DataInputStream(socket.getInputStream());
             this.out = new DataOutputStream(socket.getOutputStream());
 
@@ -32,7 +32,7 @@ public class ClientHandler {
                             break;
                         }
                         if(str.startsWith("/registration")){
-                            out.writeUTF(DataBaseService.registration(str));
+                            out.writeUTF(registration(str));
                             server.writeToAdminLogInfo("Client try to registration with data: "+str);
                         }
                         if(str.startsWith("/recovery")){
@@ -152,9 +152,23 @@ public class ClientHandler {
 
         } catch (IOException e) {
             server.writeToAdminLogError(server.stackTraceToString(e.getStackTrace()));
-//            e.printStackTrace();
         }
     }
+
+    private String registration(String regData){
+        String msg="";
+        String[] regDataArr = regData.split(" ");
+        if(DataBaseService.isUserWithLogin(regDataArr[1])){
+            msg = "Пользователь с логином "+regDataArr[1]+ " уже зарегистрирован";
+        }else if(DataBaseService.isUserWithNick(regDataArr[3])){
+            msg = "Пользователь с ником "+regDataArr[3]+ " уже зарегистрирован";
+        }else {
+            DataBaseService.writeRegDataToSQLite(regDataArr[1], regDataArr[2], regDataArr[3], regDataArr[4]);
+            msg = "/regok";
+        }
+        return msg;
+    }
+
     void sendMsg(String msg){
         try {
             out.writeUTF(msg);
