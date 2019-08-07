@@ -105,8 +105,21 @@ public class ClientHandler {
     }
 
     private void tryToRecovery(String str) throws IOException {
-        out.writeUTF(DataBaseService.recoveryPass(str));
+        out.writeUTF(recoveryPass(str));
         server.writeToAdminLogInfo("Client try to recovery password with data: "+str);
+    }
+
+    private static synchronized String recoveryPass(String recoveryData){
+        String resMsg = "/recovery ";
+        String[] recoveryDataArr = recoveryData.split(" ");
+        String password = DataBaseService.getPassword(recoveryDataArr[1],recoveryDataArr[2]);
+        if(password!=null){
+            resMsg+=password;
+        }
+        else {
+            resMsg+="User not found";
+        }
+        return resMsg;
     }
 
 

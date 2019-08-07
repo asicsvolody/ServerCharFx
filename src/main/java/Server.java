@@ -94,10 +94,17 @@ public class Server {
         clients.add(clientHandler);
         broadcastSystemMsg(clientHandler.getNick()+" подключился");
         broadcastClientList();
-        DataBaseService.sendAllMessage(clientHandler);
-
-
+        sendAllMessage(clientHandler);
     }
+
+    static synchronized void sendAllMessage(ClientHandler clientHandler) {
+        String [] msgArr= DataBaseService.getAllMessages();
+        for (String str: msgArr) {
+            clientHandler.sendMsg(str);
+        }
+    }
+
+
 
     void unsubscribe (ClientHandler clientHandler){
         clients.remove(clientHandler);
